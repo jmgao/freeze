@@ -13,7 +13,8 @@ object BuildSettings {
     resolvers += Resolver.sonatypeRepo("releases"),
     addCompilerPlugin("org.scalamacros" % "paradise" % paradiseVersion cross CrossVersion.full),
     libraryDependencies <+= (scalaVersion)("org.scala-lang" % "scala-reflect" % _),
-    libraryDependencies <+= (scalaVersion)("org.scala-lang" % "scala-compiler" % _)
+    libraryDependencies <+= (scalaVersion)("org.scala-lang" % "scala-compiler" % _),
+    libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.0"
   )
 }
 
