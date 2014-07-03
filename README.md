@@ -1,7 +1,7 @@
 ## freeze [![Build Status](https://travis-ci.org/jmgao/freeze.svg?branch=master)](https://travis-ci.org/jmgao/freeze)
 A Scala macro library to simplify the use of immutability in classes. freeze provides annotations
-that transform a class containing mutable members into a class that hides the mutable backing `var`s,
-and provides a `clone` method which takes a lambda which allows mutation.
+which transform a class with mutable fields into an immutable class with a method to explicitly
+return a mutated copy.
 
 ### Usage
 Tag classes with `@freeze` or `@freezeChild`, depending on whether they inherit from a class which has already has a freeze annotation on it. This will add a `clone` method that takes a `Mutable` clone of the original object.
@@ -48,8 +48,8 @@ class Parent(private var freeze$a: Int) implements scala.Cloneable {
 
   def sum = a + b
 
-  def clone(mutator: Test#Mutable => Any) = macro freeze.cloneImpl
-  override protected def clone(): Test = super.clone().asInstanceOf[Test]
+  def clone(mutator: Parent#Mutable => Any) = macro freeze.cloneImpl
+  override protected def clone(): Parent = super.clone().asInstanceOf[Parent]
   class Mutable {
     def a = freeze$a
     def b = freeze$b
@@ -62,7 +62,7 @@ class Child(private var freeze$c: Int, val constant_value: Int) extends Parent(1
   private def c = freeze$c
 
   def clone(mutator: Child#Mutable => Any) = macro freeze.cloneImpl
-  override protected def clone(): Test = super.clone().asInstanceOf[Test]
+  override protected def clone(): Child = super.clone().asInstanceOf[Child]
   class Mutable extends super.Mutable {
     /* public */ def c = freeze$c
     /* public */ def c_=(value: Int) = { freeze$c = value }
@@ -79,3 +79,4 @@ class Child(private var freeze$c: Int, val constant_value: Int) extends Parent(1
 
 ### Known issues (WONTFIX)
 * Name collisions will happen if you use names that begin with `freeze$`, or use the names Mutable or clone. Don't do this.
+* Mutable objects remain mutable if you have them as members. Don't do this either.
