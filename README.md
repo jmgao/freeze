@@ -1,4 +1,4 @@
-## freeze
+## freeze [![Build Status](https://travis-ci.org/jmgao/freeze.svg?branch=master)](https://travis-ci.org/jmgao/freeze)
 A Scala macro library to simplify the use of immutability in classes. freeze provides annotations
 that transform a class containing mutable members into a class that hides the mutable backing `var`s,
 and provides a `clone` method which takes a lambda which allows mutation.
