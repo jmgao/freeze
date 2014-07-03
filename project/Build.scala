@@ -14,7 +14,8 @@ object BuildSettings {
     addCompilerPlugin("org.scalamacros" % "paradise" % paradiseVersion cross CrossVersion.full),
     libraryDependencies <+= (scalaVersion)("org.scala-lang" % "scala-reflect" % _),
     libraryDependencies <+= (scalaVersion)("org.scala-lang" % "scala-compiler" % _),
-    libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.0"
+    libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.0",
+    publishArtifact in Test := false
   )
 }
 
@@ -24,13 +25,11 @@ object FreezeBuild extends Build {
   lazy val root: Project = Project(
     id = "root",
     base = file("."),
-    settings = buildSettings ++ Seq(
-      run <<= run in Compile in test
-    )
+    settings = buildSettings ++ Seq(publishArtifact := false)
   ) aggregate(macros, test)
 
   lazy val macros: Project = Project(
-    id = "macros",
+    id = "freeze",
     base = file("macros"),
     settings = buildSettings ++ Seq(
       libraryDependencies <+= (scalaVersion)("org.scala-lang" % "scala-reflect" % _),
@@ -44,6 +43,6 @@ object FreezeBuild extends Build {
   lazy val test: Project = Project(
     id = "test",
     base = file("test"),
-    settings = buildSettings
+    settings = buildSettings ++ Seq(publishArtifact := false)
   ) dependsOn(macros)
 }

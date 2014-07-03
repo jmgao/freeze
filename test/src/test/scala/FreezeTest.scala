@@ -1,6 +1,7 @@
 package us.insolit.freeze.test
 
 import scala.language.experimental.macros
+import org.scalatest.FunSuite
 import org.scalatest.Assertions._
 import us.insolit.freeze._
 
@@ -22,8 +23,8 @@ class Child(private var d: String, override val untouched: Int) extends Parent("
   override def toString() = "Child(%s, %s, %s, %s, %d)".format(a, b, c, d, untouched)
 }
 
-object FreezeTest {
-  def main(args: Array[String]) = {
+class FreezeTest extends FunSuite {
+  test("@freeze") {
     val parent = new Parent("a", "b")
 
     assert(parent.toString() == "Parent(a, b, c, 1)")
@@ -35,7 +36,9 @@ object FreezeTest {
 
     assert(parent.toString == "Parent(a, b, c, 1)")
     assert(mutatedParent.toString == "Parent(mutated a, b, mutated c, 1)")
+  }
 
+  test("@freezeChild - child") {
     val child = new Child("d", 123)
     assert(child.toString == "Child(child a, child b, c, d, 123)")
 
@@ -47,6 +50,11 @@ object FreezeTest {
 
     assert(child.toString == "Child(child a, child b, c, d, 123)")
     assert(mutatedChild.toString == "Child(mutated a, child b, mutated c, mutated d, 123)")
+  }
+
+  test("@freezeChild - parent") {
+    val child = new Child("d", 123)
+    assert(child.toString == "Child(child a, child b, c, d, 123)")
 
     val childAsParent: Parent = child
     assert(childAsParent.toString == "Child(child a, child b, c, d, 123)")
